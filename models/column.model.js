@@ -9,6 +9,7 @@ const columnSchema = new mongoose.Schema(
 	{
 		timestamps: true,
 		toJSON: {
+			virtuals: true,
 			transform: (doc, ret) => {
 				ret.id = doc._id;
 				delete ret._id;
@@ -26,6 +27,6 @@ columnSchema.virtual('cards', {
 	options: { sort: { position: -1 } }
 });
 
-const Column = new mongoose.Model('Column', columnSchema);
+const Column = new mongoose.model('Column', columnSchema);
 
 module.exports = Column;
