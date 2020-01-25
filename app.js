@@ -5,7 +5,7 @@ const express = require('express');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
-const cors = require('cors');
+const cors = require('./config/cors.config');
 
 /**
  * DB config
@@ -16,10 +16,15 @@ require('./config/db.config');
  * Configure express
  */
 const app = express();
+app.use(cors);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+/**
+ * Configure CORS
+ */
 
 
 /**
@@ -27,14 +32,6 @@ app.use(cookieParser());
  */
 const router = require('./config/routes.js');
 app.use('/', router);
-
-/**
- * Configure CORS
- */
-app.use(cors({
-    credentials: true,
-    origin: ['http://localhost:3000']
-}))
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
