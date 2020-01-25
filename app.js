@@ -23,11 +23,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 /**
- * Configure CORS
- */
-
-
-/**
  * Configure routes
  */
 const router = require('./config/routes.js');
