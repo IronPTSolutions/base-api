@@ -1,5 +1,6 @@
 const Card = require('../models/card.model');
 const createError = require('http-errors');
+const mongoose = require('mongoose');
 
 module.exports.list = (req, res, next) => {
 	Card.find()
@@ -10,9 +11,17 @@ module.exports.list = (req, res, next) => {
 }
 
 module.exports.get = (req, res, next) => {
+	if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+		throw createError(400, 'Invalid ID');
+	}
 	Card.findById(req.params.id)
 		.then(
-			card => res.json(card)
+			card => {
+				if (!card) {
+					throw createError(404, 'Card not found');
+				}
+				res.json(card);
+			}
 		)
 		.catch(next);
 }
@@ -27,6 +36,9 @@ module.exports.create = (req, res, next) => {
 }
 
 module.exports.update = (req, res, next) => {
+	if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+		throw createError(400, 'Invalid ID');
+	}
 	Card.findByIdAndUpdate(req.params.id, req.body, { new: true })
 		.then(
 			card => {
@@ -41,6 +53,9 @@ module.exports.update = (req, res, next) => {
 }
 
 module.exports.delete = (req, res, next) => {
+	if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+		throw createError(400, 'Invalid ID');
+	}
 	Card.findByIdAndDelete(req.params.id)
 		.then(
 			card => {

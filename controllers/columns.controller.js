@@ -1,6 +1,7 @@
 const Column = require('../models/column.model');
 const Card = require('../models/card.model');
 const createError = require('http-errors');
+const mongoose = require('mongoose');
 
 module.exports.list = (req, res, next) => {
 	Column.find()
@@ -12,10 +13,18 @@ module.exports.list = (req, res, next) => {
 }
 
 module.exports.get = (req, res, next) => {
+	if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+		throw createError(400, 'Invalid ID');
+	}
 	Column.findById(req.params.id)
 		.populate('cards')
 		.then(
-			column => res.json(column)
+			column => {
+				if (!card) {
+					throw createError(404, 'Card not found');
+				}
+				res.json(column);
+			}
 		)
 		.catch(next);
 }
@@ -30,6 +39,9 @@ module.exports.create = (req, res, next) => {
 }
 
 module.exports.update = (req, res, next) => {
+	if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+		throw createError(400, 'Invalid ID');
+	}
 	Column.findByIdAndUpdate(req.params.id, req.body, { new: true })
 		.then(
 			column => {
@@ -44,6 +56,9 @@ module.exports.update = (req, res, next) => {
 }
 
 module.exports.delete = (req, res, next) => {
+	if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+		throw createError(400, 'Invalid ID');
+	}
 	Promise
 		.all([
 			Column.findByIdAndDelete(req.params.id),
